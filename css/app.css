@@ -245,15 +245,7 @@ html, body {
 .nav-item.active { color: var(--laranja); }
 .nav-item svg { transition: stroke 0.15s; }
 
-.nav-novo {
-  background: var(--laranja);
-  color: #fff !important;
-  border-radius: 16px;
-  margin: 8px 4px;
-  flex: 0 0 64px;
-  box-shadow: 0 2px 8px rgba(249,115,22,0.35);
-}
-.nav-novo:active { opacity: 0.85; }
+.nav-novo { /* mesmo estilo dos outros — sem destaque especial */ }
 
 /* ============================================================
    Formulários e campos
