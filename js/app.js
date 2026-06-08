@@ -60,6 +60,14 @@ function sairDoApp() {
   estado.professora = null;
   document.getElementById('app-shell').classList.add('hidden');
   document.getElementById('screen-login').classList.add('active');
+
+  // Reseta formulário de login completamente
+  const btn = document.getElementById('btn-login');
+  btn.disabled = false;
+  btn.textContent = 'Entrar';
+  document.getElementById('input-email').value = '';
+  document.getElementById('input-senha').value = '';
+  ocultarErro('login-erro');
 }
 
 function atualizarSaudacao() {
@@ -796,8 +804,10 @@ function configurarFormLogin() {
         document.getElementById('input-email').value,
         document.getElementById('input-senha').value
       );
+      // Sucesso: auth listener cuidará de entrarNoApp; botão fica desabilitado até lá
     } catch (err) {
       mostrarErro('login-erro', 'E-mail ou senha incorretos.');
+    } finally {
       btn.disabled = false;
       btn.textContent = 'Entrar';
     }
