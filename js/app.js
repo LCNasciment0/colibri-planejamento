@@ -525,6 +525,14 @@ async function carregarAgenda() {
   document.getElementById('fab-novo-evento').onclick = () => abrirModalEvento();
 }
 
+const EMOJI_CATEGORIA = {
+  reuniao: '🟣',
+  formacao: '🔵',
+  escola: '🟠',
+  pessoal: '🩷',
+  outro: '⚪',
+};
+
 function renderizarAgenda(eventos) {
   const container = document.getElementById('lista-eventos');
   if (!eventos.length) {
@@ -532,27 +540,54 @@ function renderizarAgenda(eventos) {
     return;
   }
 
-  const grupos = agruparEventosPorData(eventos);
-  container.innerHTML = Object.entries(grupos).map(([data, evs]) => `
-    <div class="grupo-data">
-      <h4 class="data-label">${formatarDataExibicao(data)}</h4>
-      ${evs.map((ev) => `
-        <div class="card-evento" style="--ev-cor: ${CORES_CATEGORIA[ev.categoria] || '#9CA3AF'}">
-          <div class="ev-barra"></div>
-          <div class="ev-info">
-            <span class="ev-titulo">${ev.titulo}</span>
-            <span class="ev-meta">
-              ${ev.hora_inicio ? ev.hora_inicio.slice(0,5) : ''}
-              ${ev.local ? '· ' + ev.local : ''}
-            </span>
-          </div>
-          <button class="btn-deletar-ev" data-id="${ev.id}" title="Remover">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
-          </button>
+  const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+  const amanha = new Date(hoje); amanha.setDate(amanha.getDate() + 1);
+  const fimSemana = new Date(hoje); fimSemana.setDate(fimSemana.getDate() + 7);
+  const fimMes = new Date(hoje); fimMes.setDate(fimMes.getDate() + 30);
+
+  const buckets = { hoje: [], amanha: [], semana: [], mes: [], depois: [] };
+
+  eventos.forEach((ev) => {
+    const [a, m, d] = ev.data.split('-').map(Number);
+    const dt = new Date(a, m - 1, d);
+    if (dt.getTime() === hoje.getTime()) buckets.hoje.push(ev);
+    else if (dt.getTime() === amanha.getTime()) buckets.amanha.push(ev);
+    else if (dt < fimSemana) buckets.semana.push(ev);
+    else if (dt < fimMes) buckets.mes.push(ev);
+    else buckets.depois.push(ev);
+  });
+
+  const labels = {
+    hoje: 'Hoje',
+    amanha: 'Amanhã',
+    semana: 'Esta semana',
+    mes: 'Próximo mês',
+    depois: 'Mais adiante',
+  };
+
+  let html = '';
+  Object.entries(buckets).forEach(([chave, evs]) => {
+    if (!evs.length) return;
+    html += `<div class="separador-periodo"><span>${labels[chave]}</span></div>`;
+    html += evs.map((ev) => `
+      <div class="card-evento" style="--ev-cor: ${CORES_CATEGORIA[ev.categoria] || '#9CA3AF'}">
+        <div class="ev-barra"></div>
+        <div class="ev-info">
+          <span class="ev-titulo">${ev.titulo}</span>
+          <span class="ev-meta">
+            <span class="ev-cat-badge" style="background:${CORES_CATEGORIA[ev.categoria] || '#9CA3AF'}">${LABELS_CATEGORIA[ev.categoria] || 'Outro'}</span>
+            ${ev.hora_inicio ? ev.hora_inicio.slice(0, 5) : 'Dia todo'}
+            ${ev.local ? '· ' + ev.local : ''}
+          </span>
         </div>
-      `).join('')}
-    </div>
-  `).join('');
+        <button class="btn-deletar-ev" data-id="${ev.id}" title="Remover">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+        </button>
+      </div>
+    `).join('');
+  });
+
+  container.innerHTML = html;
 
   container.querySelectorAll('.btn-deletar-ev').forEach((btn) => {
     btn.addEventListener('click', async (e) => {
@@ -793,13 +828,16 @@ function renderizarCalendarioAgendaGrid(container, mes, ano, eventosPorDia) {
     const dataStr = `${ano}-${String(mes).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
     const ehHoje = d === hoje.getDate() && mes === hoje.getMonth() + 1 && ano === hoje.getFullYear();
     const evsDia = eventosPorDia[dataStr] || [];
-    const pontos = evsDia.slice(0, 3).map((ev) =>
-      `<span class="cal-ponto-cor" style="background:${CORES_CATEGORIA[ev.categoria] || '#9CA3AF'}"></span>`
+
+    // Uma bolinha por categoria distinta (máx 3)
+    const categorias = [...new Set(evsDia.map((ev) => ev.categoria))].slice(0, 3);
+    const pontos = categorias.map((cat) =>
+      `<span class="cal-ponto-cor" style="background:${CORES_CATEGORIA[cat] || '#9CA3AF'}"></span>`
     ).join('');
 
     let classes = 'cal-dia';
     if (ehHoje) classes += ' hoje';
-    if (evsDia.length) classes += ' tem-evento';
+    if (evsDia.length) classes += ' tem-evento clicavel';
 
     celulas += `<div class="${classes}" data-data="${dataStr}">
       <span>${d}</span>

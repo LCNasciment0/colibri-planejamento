@@ -535,11 +535,21 @@ textarea { resize: vertical; }
   cursor: default;
 }
 .cal-dia.vazio { visibility: hidden; }
-.cal-dia.hoje {
+.cal-dia.hoje { background: transparent; }
+.cal-dia.hoje > span:first-child {
+  width: 28px;
+  height: 28px;
   background: var(--laranja);
   color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 .cal-dia.tem-evento { background: #FFF0E0; color: var(--laranja); }
+.cal-dia.tem-plano { background: color-mix(in srgb, var(--cor-plano, #F97316) 10%, white); }
 .cal-ponto {
   width: 5px;
   height: 5px;
@@ -623,7 +633,7 @@ textarea { resize: vertical; }
 /* ============================================================
    Agenda / Eventos
    ============================================================ */
-.lista-eventos { display: flex; flex-direction: column; gap: 16px; }
+.lista-eventos { display: flex; flex-direction: column; gap: 10px; }
 
 .grupo-data {}
 .data-label {
@@ -634,6 +644,42 @@ textarea { resize: vertical; }
   letter-spacing: 0.05em;
   margin-bottom: 8px;
 }
+
+.separador-periodo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0 2px;
+}
+.separador-periodo::before,
+.separador-periodo::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.separador-periodo span {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.ev-cat-badge {
+  display: inline-block;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 20px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.cal-dia.clicavel { cursor: pointer; }
+.cal-dia.clicavel:hover { background: #F3F4F6; }
 
 .card-evento {
   display: flex;
