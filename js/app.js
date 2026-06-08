@@ -993,6 +993,12 @@ function atualizarRelogio() {
     const sep = tempEl ? ' · ' : '';
     el.textContent = `${tempEl}${sep}${diaSem}, ${dia} de ${mes} · ${hora}:${min}`;
   }
+
+  // Atualiza emoji se já temos o weathercode guardado
+  const emojiEl = document.getElementById('clima-emoji');
+  if (emojiEl && emojiEl.dataset.weathercode) {
+    emojiEl.textContent = getEmojiClima(Number(emojiEl.dataset.weathercode), agora.getHours());
+  }
 }
 
 async function buscarClima() {
@@ -1005,8 +1011,9 @@ async function buscarClima() {
     const temp = Math.round(dados.current.temperature_2m);
     const code = dados.current.weathercode;
 
-    const emoji = emojiClima(code);
-    document.getElementById('clima-emoji').textContent = emoji;
+    const emojiEl = document.getElementById('clima-emoji');
+    emojiEl.dataset.weathercode = code;
+    emojiEl.textContent = getEmojiClima(code, new Date().getHours());
 
     const infoEl = document.getElementById('clima-info');
     if (infoEl) {
@@ -1018,12 +1025,14 @@ async function buscarClima() {
   }
 }
 
-function emojiClima(code) {
-  if (code === 0) return '☀️';
-  if (code <= 2) return '🌤️';
+function getEmojiClima(code, hora) {
+  const noite = hora >= 20 || hora < 6;
+  const tarde = hora >= 18 && hora < 20;
+  if (code === 0) return noite ? '🌙' : tarde ? '🌇' : '☀️';
+  if (code <= 2)  return noite ? '🌙' : '🌤️';
   if (code === 3) return '☁️';
   if (code <= 48) return '🌫️';
-  if (code <= 67) return '🌧️';
+  if (code <= 67) return noite ? '🌧️' : '🌦️';
   if (code <= 77) return '❄️';
   if (code <= 82) return '🌦️';
   return '⛈️';
