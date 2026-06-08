@@ -60,6 +60,15 @@ async function criarEvento({ professoraId, titulo, categoria, data, horaInicio, 
   return evento;
 }
 
+async function contarEventos(professoraId) {
+  const { count, error } = await db
+    .from('eventos')
+    .select('*', { count: 'exact', head: true })
+    .eq('professora_id', professoraId);
+  if (error) return 0;
+  return count ?? 0;
+}
+
 async function deletarEvento(id) {
   const { error } = await db.from('eventos').delete().eq('id', id);
   if (error) throw error;

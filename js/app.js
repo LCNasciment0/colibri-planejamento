@@ -121,13 +121,15 @@ function navegarPara(screenId) {
 async function carregarHome() {
   if (!estado.professora) return;
   try {
-    const [planos, turmas] = await Promise.all([
+    const [planos, turmas, totalEventos] = await Promise.all([
       listarPlanejamentos(estado.professora.id),
       listarTurmas(),
+      contarEventos(estado.professora.id),
     ]);
 
     document.getElementById('stat-planos').textContent = planos.length;
     document.getElementById('stat-turmas').textContent = turmas.length;
+    document.getElementById('stat-eventos').textContent = totalEventos;
 
     renderizarListaRecentes(planos.slice(0, 5));
   } catch (err) {
@@ -717,6 +719,7 @@ function configurarFormEvento() {
     e.preventDefault();
     const btn = e.target.querySelector('[type=submit]');
     btn.disabled = true;
+    btn.textContent = 'Salvando...';
     try {
       await criarEvento({
         professoraId: estado.professora.id,
@@ -729,10 +732,13 @@ function configurarFormEvento() {
         observacao: document.getElementById('ev-obs').value,
       });
       document.getElementById('modal-evento').classList.add('hidden');
+      document.getElementById('form-evento').reset();
       carregarAgenda();
     } catch (err) {
       alert('Erro ao salvar evento: ' + err.message);
+    } finally {
       btn.disabled = false;
+      btn.textContent = 'Salvar';
     }
   });
 }
