@@ -1,0 +1,663 @@
+/* ============================================================
+   Design System — Colibri Planejamento
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&display=swap');
+
+:root {
+  --laranja:  #F97316;
+  --roxo:     #7C3AED;
+  --verde:    #10B981;
+  --azul:     #3B82F6;
+  --rosa:     #EC4899;
+  --bg:       #FFF8F0;
+  --text:     #1E1B18;
+  --muted:    #9CA3AF;
+  --border:   #E5E7EB;
+  --radius:   16px;
+  --nav-h:    68px;
+  --topo-h:   60px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================================
+   Telas (SPA)
+   ============================================================ */
+.screen { display: none; height: 100dvh; flex-direction: column; }
+.screen.active { display: flex; }
+
+/* ============================================================
+   Login
+   ============================================================ */
+#screen-login {
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(160deg, #FFF8F0 0%, #FFE8D5 100%);
+  padding: 24px;
+}
+
+.login-container { width: 100%; max-width: 380px; }
+
+.login-logo {
+  text-align: center;
+  margin-bottom: 36px;
+}
+.login-logo img { height: 72px; margin-bottom: 8px; }
+.logo-text {
+  font-family: 'Fredoka One', cursive;
+  font-size: 2.4rem;
+  color: var(--laranja);
+  line-height: 1;
+}
+.logo-sub {
+  font-size: 1rem;
+  color: var(--muted);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.login-form { display: flex; flex-direction: column; gap: 16px; }
+
+/* ============================================================
+   App Shell
+   ============================================================ */
+#app-shell {
+  height: 100dvh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+#app-shell .screen {
+  height: calc(100dvh - var(--nav-h));
+  flex-direction: column;
+}
+
+/* ============================================================
+   Topo
+   ============================================================ */
+.topo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px 12px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  min-height: var(--topo-h);
+  flex-shrink: 0;
+}
+.topo h2 {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.4rem;
+  color: var(--laranja);
+  flex: 1;
+}
+.saudacao { font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+.nome-professora { font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: var(--laranja); }
+.subtitulo { font-size: 0.8rem; color: var(--muted); }
+
+/* ============================================================
+   Conteúdo scrollável
+   ============================================================ */
+.conteudo {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px 24px;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ============================================================
+   Bottom Navigation
+   ============================================================ */
+.bottom-nav {
+  display: flex;
+  background: #fff;
+  border-top: 1px solid var(--border);
+  height: var(--nav-h);
+  flex-shrink: 0;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.06);
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  transition: color 0.15s;
+  padding: 8px 4px;
+}
+.nav-item.active { color: var(--laranja); }
+.nav-item svg { transition: color 0.15s; }
+
+.nav-novo {
+  background: var(--laranja);
+  color: #fff !important;
+  border-radius: 16px;
+  margin: 8px 4px;
+  flex: 0 0 64px;
+}
+.nav-novo:active { opacity: 0.85; }
+
+/* ============================================================
+   Formulários e campos
+   ============================================================ */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.field-group label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+}
+input[type=email],
+input[type=password],
+input[type=text],
+input[type=number],
+input[type=date],
+input[type=time],
+select.select-campo,
+textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  background: #fff;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--laranja);
+}
+textarea { resize: vertical; }
+
+.fields-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* ============================================================
+   Botões
+   ============================================================ */
+.btn-primary {
+  background: var(--laranja);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 13px 24px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-primary:active { opacity: 0.85; }
+.btn-full { width: 100%; }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 20px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text);
+  padding: 6px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  line-height: 1;
+  transition: background 0.1s;
+}
+.btn-icon:hover { background: var(--border); }
+
+.btn-novo {
+  background: var(--laranja);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+}
+
+/* ============================================================
+   Chips de seleção
+   ============================================================ */
+.chips-container { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.chip-turma {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 2px solid var(--border);
+  background: #fff;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text);
+  transition: all 0.15s;
+}
+.chip-turma.active {
+  border-color: var(--chip-cor, var(--laranja));
+  background: color-mix(in srgb, var(--chip-cor, var(--laranja)) 12%, white);
+  color: var(--chip-cor, var(--laranja));
+}
+
+.chip-cor {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.chip-cor.active { border-color: var(--text); transform: scale(1.15); }
+
+.chip-cat {
+  padding: 7px 14px;
+  border-radius: 20px;
+  border: 2px solid var(--border);
+  background: #fff;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--muted);
+  transition: all 0.15s;
+}
+.chip-cat.active {
+  background: var(--cat-cor);
+  border-color: var(--cat-cor);
+  color: #fff;
+}
+
+/* ============================================================
+   Cards de Planejamento
+   ============================================================ */
+.lista-planos { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+
+.card-plano {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.card-plano:active { transform: scale(0.98); }
+
+.card-plano-cor {
+  width: 6px;
+  align-self: stretch;
+  background: var(--cor-plano, var(--laranja));
+  flex-shrink: 0;
+}
+.card-plano-info {
+  flex: 1;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.card-plano-turma { font-weight: 700; font-size: 0.95rem; }
+.card-plano-mes { font-size: 0.8rem; color: var(--muted); }
+
+.badge-status {
+  margin-right: 12px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+.badge-status.rascunho { background: #FEF3C7; color: #92400E; }
+.badge-status.concluido { background: #D1FAE5; color: #065F46; }
+
+/* ============================================================
+   Stats Home
+   ============================================================ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.stat-card {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 14px 10px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.stat-numero { font-family: 'Fredoka One', cursive; font-size: 1.8rem; color: var(--laranja); }
+.stat-label { font-size: 0.72rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
+
+/* ============================================================
+   Seção título
+   ============================================================ */
+.secao-titulo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.secao-titulo h3 {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.1rem;
+  color: var(--text);
+}
+
+/* ============================================================
+   Calendário
+   ============================================================ */
+.calendario-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.mes-ano-label {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.15rem;
+  color: var(--text);
+}
+
+.calendario-grid { margin-bottom: 20px; }
+
+.cal-cabecalho {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 4px;
+}
+.cal-dia-semana {
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--muted);
+  padding: 4px 0;
+}
+
+.cal-dias {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+.cal-dia {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  position: relative;
+  cursor: default;
+}
+.cal-dia.vazio { visibility: hidden; }
+.cal-dia.hoje {
+  background: var(--laranja);
+  color: #fff;
+}
+.cal-dia.tem-evento { background: #FFF0E0; color: var(--laranja); }
+.cal-ponto {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--laranja);
+  position: absolute;
+  bottom: 3px;
+}
+
+/* ============================================================
+   Editor de Planejamento
+   ============================================================ */
+.abas-semanas {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 16px;
+  scrollbar-width: none;
+}
+.abas-semanas::-webkit-scrollbar { display: none; }
+
+.aba-semana {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 2px solid var(--border);
+  background: #fff;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.aba-semana.active {
+  background: var(--laranja);
+  border-color: var(--laranja);
+  color: #fff;
+}
+
+.semanas-conteudo { display: flex; flex-direction: column; gap: 12px; }
+.semana-painel { display: none; flex-direction: column; gap: 12px; }
+.semana-painel.active { display: flex; }
+
+.card-dia {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 14px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+}
+.dia-label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--laranja);
+  margin-bottom: 8px;
+}
+.textarea-atividade {
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  width: 100%;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.88rem;
+  resize: vertical;
+  min-height: 80px;
+  background: var(--bg);
+}
+
+.editor-acoes {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 0;
+}
+.txt-salvo {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--verde);
+}
+
+/* ============================================================
+   Agenda / Eventos
+   ============================================================ */
+.lista-eventos { display: flex; flex-direction: column; gap: 16px; }
+
+.grupo-data {}
+.data-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.card-evento {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  gap: 0;
+}
+.ev-barra {
+  width: 5px;
+  align-self: stretch;
+  background: var(--ev-cor, var(--laranja));
+  flex-shrink: 0;
+}
+.ev-info {
+  flex: 1;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ev-titulo { font-weight: 700; font-size: 0.93rem; }
+.ev-meta { font-size: 0.78rem; color: var(--muted); }
+
+.btn-deletar-ev {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  padding: 12px;
+  display: flex;
+  align-items: center;
+}
+.btn-deletar-ev:hover { color: #EF4444; }
+
+/* FAB */
+.fab {
+  position: fixed;
+  bottom: calc(var(--nav-h) + 16px);
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--laranja);
+  color: #fff;
+  font-size: 1.8rem;
+  line-height: 1;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(249,115,22,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s;
+  z-index: 10;
+}
+.fab:active { transform: scale(0.92); }
+
+/* ============================================================
+   Modal
+   ============================================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+}
+.modal-sheet {
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  width: 100%;
+  max-height: 92dvh;
+  overflow-y: auto;
+  padding: 12px 20px 32px;
+}
+.modal-handle {
+  width: 40px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 0 auto 16px;
+}
+.modal-titulo {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.25rem;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+.modal-acoes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 8px;
+}
+#modal-evento form { display: flex; flex-direction: column; gap: 14px; }
+
+/* ============================================================
+   Utilitários
+   ============================================================ */
+.hidden { display: none !important; }
+.empty-state {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.9rem;
+  padding: 32px 16px;
+  line-height: 1.6;
+}
+.erro-msg {
+  color: #EF4444;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.muted-txt { color: var(--muted); font-size: 0.85rem; }
+.loading-txt { color: var(--muted); font-size: 0.85rem; }
+
+/* Scrollbar fina */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
