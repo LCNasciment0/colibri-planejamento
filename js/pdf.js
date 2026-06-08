@@ -50,10 +50,10 @@ async function gerarPDF(planejamentoId) {
   doc.text(new Date().toLocaleDateString('pt-BR'), PW - MARGEM, 10.5, { align: 'right' });
 
   // ── Tabela ───────────────────────────────────────────────────
-  const tableTop   = HEADER_H + 1;
-  const tableH     = PH - tableTop - MARGEM;          // espaço livre para tabela
-  const bodyRowH   = (tableH - HEAD_ROW) / 4;         // altura de cada linha de semana
-  const colDiaW    = (PW - MARGEM * 2 - COL_SEM) / 5; // largura igual para cada dia
+  const tableTop      = HEADER_H + 1;
+  const alturaDisponivel = PH - 16 - 16;
+  const bodyRowH      = alturaDisponivel / 4;
+  const colDiaW       = (PW - MARGEM * 2 - COL_SEM) / 5;
 
   const body = plano.semanas.map((semana) => {
     const row = [`S${semana.numero}`];
@@ -65,6 +65,11 @@ async function gerarPDF(planejamentoId) {
   });
 
   doc.autoTable({
+    didParseCell(data) {
+      if (data.section === 'body' && data.column.index > 0) {
+        data.cell.styles.fontSize = calcularFonte(data.cell.raw, colDiaW, bodyRowH);
+      }
+    },
     startY: tableTop,
     head: [['', ...DIAS_LABEL]],
     body,
@@ -110,6 +115,16 @@ async function gerarPDF(planejamentoId) {
 
   const nomeArquivo = `planejamento-${slugTurma || 'colibri'}-${plano.mes}-${plano.ano}.pdf`;
   doc.save(nomeArquivo);
+}
+
+function calcularFonte(texto, larguraCelula, alturaCelula) {
+  if (!texto) return 8;
+  const chars = texto.length;
+  if (chars < 50)  return 8;
+  if (chars < 100) return 7;
+  if (chars < 150) return 6;
+  if (chars < 250) return 5;
+  return 4;
 }
 
 function hexParaRgb(hex) {
