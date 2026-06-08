@@ -65,9 +65,16 @@ function sairDoApp() {
 function atualizarSaudacao() {
   const hora = new Date().getHours();
   let saudacao = hora < 12 ? 'Bom dia' : hora < 18 ? 'Boa tarde' : 'Boa noite';
-  const nome = estado.professora?.nome || '';
-  document.getElementById('txt-saudacao').textContent = `${saudacao},`;
-  document.getElementById('txt-nome-professora').textContent = nome;
+  const nomeCompleto = estado.professora?.nome || '';
+  const primeiroNome = nomeCompleto.split(' ')[0] || nomeCompleto;
+  const iniciais = estado.professora?.initials ||
+    nomeCompleto.split(' ').filter(Boolean).slice(0, 2).map((p) => p[0].toUpperCase()).join('') || '?';
+
+  const elSaudacao = document.getElementById('txt-saudacao-home');
+  if (elSaudacao) elSaudacao.textContent = `${saudacao}, ${primeiroNome}! 🌟`;
+
+  const elAvatar = document.getElementById('home-avatar-iniciais');
+  if (elAvatar) elAvatar.textContent = iniciais;
 }
 
 // --- Navegação ---
@@ -137,17 +144,17 @@ function renderizarListaRecentes(planos) {
 
   const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   container.innerHTML = planos.map((p) => `
-    <div class="card-plano" data-id="${p.id}" style="--cor-plano: ${p.cor}">
-      <div class="card-plano-cor"></div>
-      <div class="card-plano-info">
-        <span class="card-plano-turma">${p.turmas?.emoji || ''} ${p.turmas?.nome || ''}</span>
-        <span class="card-plano-mes">${meses[p.mes - 1]} ${p.ano}</span>
+    <div class="card-recente" data-id="${p.id}" style="--cor-plano: ${p.cor || '#F97316'}">
+      <div class="card-recente-top">
+        <span class="card-recente-emoji">📅</span>
+        <span class="badge-status ${p.status}">${p.status === 'concluido' ? 'Concluído' : 'Em edição'}</span>
       </div>
-      <span class="badge-status ${p.status}">${p.status === 'concluido' ? 'Concluído' : 'Rascunho'}</span>
+      <span class="card-recente-mes">${meses[p.mes - 1]} ${p.ano}</span>
+      <span class="card-recente-turma">${p.turmas?.emoji || ''} ${p.turmas?.nome || ''}</span>
     </div>
   `).join('');
 
-  container.querySelectorAll('.card-plano').forEach((card) => {
+  container.querySelectorAll('.card-recente').forEach((card) => {
     card.addEventListener('click', () => abrirEditor(card.dataset.id));
   });
 }

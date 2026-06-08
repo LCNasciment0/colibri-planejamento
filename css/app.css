@@ -128,6 +128,82 @@ html, body {
 .subtitulo { font-size: 0.8rem; color: var(--muted); }
 
 /* ============================================================
+   Topo Home
+   ============================================================ */
+.topo-home {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px 10px;
+  background: var(--bg);
+  flex-shrink: 0;
+}
+.topo-home-logo { display: flex; align-items: center; gap: 10px; }
+.home-logo-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--laranja);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+.home-logo-texto { display: flex; flex-direction: column; gap: 0; }
+.home-logo-nome {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.2rem;
+  color: var(--laranja);
+  line-height: 1.1;
+}
+.home-logo-sub {
+  font-size: 0.68rem;
+  color: var(--muted);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.home-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7C3AED, #EC4899);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: 'Fredoka One', cursive;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+/* Saudação home */
+.home-saudacao {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.home-saudacao-txt {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.35rem;
+  color: var(--text);
+}
+.btn-logout-home {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  padding: 6px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+}
+.btn-logout-home:hover { color: #EF4444; }
+
+/* ============================================================
    Conteúdo scrollável
    ============================================================ */
 .conteudo {
@@ -470,7 +546,101 @@ textarea { resize: vertical; }
   gap: 2px;
 }
 .stat-numero { font-family: 'Fredoka One', cursive; font-size: 1.8rem; color: var(--laranja); }
+.stat-turmas-cor { color: var(--laranja); }
+.stat-planos-cor { color: var(--roxo); }
+.stat-pdfs-cor  { color: var(--verde); }
 .stat-label { font-size: 0.72rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
+
+/* ============================================================
+   Botão Novo Planejamento (home)
+   ============================================================ */
+.btn-novo-plano-home {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  background: linear-gradient(135deg, #F97316, #FBBF24);
+  color: #fff;
+  border: none;
+  border-radius: 18px;
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.12s;
+  box-shadow: 0 4px 14px rgba(249,115,22,0.35);
+  margin-bottom: 4px;
+}
+.btn-novo-plano-home:active { opacity: 0.88; transform: scale(0.98); }
+.btn-novo-icone {
+  font-size: 1.6rem;
+  background: rgba(255,255,255,0.2);
+  border-radius: 12px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.btn-novo-textos {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+.btn-novo-titulo {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+.btn-novo-sub {
+  font-size: 0.78rem;
+  opacity: 0.85;
+  font-weight: 600;
+}
+
+/* ============================================================
+   Grid de Recentes (home)
+   ============================================================ */
+.lista-recentes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 8px;
+}
+.card-recente {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 12px 12px 14px;
+  cursor: pointer;
+  transition: transform 0.15s;
+  border-top: 3px solid var(--cor-plano, var(--laranja));
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.card-recente:active { transform: scale(0.97); }
+.card-recente-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+.card-recente-emoji { font-size: 1.3rem; }
+.card-recente-mes { font-size: 0.72rem; color: var(--muted); font-weight: 700; }
+.card-recente-turma { font-size: 0.88rem; font-weight: 700; color: var(--text); }
+
+/* ============================================================
+   Nav emoji
+   ============================================================ */
+.nav-emoji { font-size: 1.25rem; line-height: 1; }
+
+/* ============================================================
+   Semana atual no calendário histórico
+   ============================================================ */
+.cal-dia.semana-atual {
+  background: color-mix(in srgb, var(--laranja) 12%, white) !important;
+}
 
 /* ============================================================
    Seção título
