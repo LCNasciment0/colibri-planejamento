@@ -199,32 +199,87 @@ function renderizarListaMes(planos) {
 // --- Novo Planejamento ---
 
 async function carregarFormNovoPlano() {
+  document.getElementById('input-mes').value = new Date().getMonth() + 1;
   try {
     const turmas = await listarTurmas();
-    const container = document.getElementById('chips-turmas');
-    if (!turmas.length) {
-      container.innerHTML = '<p class="muted-txt">Nenhuma turma cadastrada no Supabase.</p>';
-      return;
-    }
-    container.innerHTML = turmas.map((t) => `
-      <button type="button" class="chip-turma" data-id="${t.id}" style="--chip-cor: ${t.cor}">
-        <span>${t.emoji}</span> ${t.nome}
-      </button>
-    `).join('');
-
-    container.querySelectorAll('.chip-turma').forEach((chip) => {
-      chip.addEventListener('click', () => {
-        container.querySelectorAll('.chip-turma').forEach((c) => c.classList.remove('active'));
-        chip.classList.add('active');
-        document.getElementById('input-turma-id').value = chip.dataset.id;
-      });
-    });
+    renderizarChipsTurmas(turmas);
   } catch (err) {
     console.error('Erro ao carregar turmas:', err);
   }
+}
 
-  // Pré-seleciona mês atual
-  document.getElementById('input-mes').value = new Date().getMonth() + 1;
+function renderizarChipsTurmas(turmas, idParaSelecionar = null) {
+  const container = document.getElementById('chips-turmas');
+
+  const chipsHtml = turmas.map((t) => `
+    <button type="button" class="chip-turma" data-id="${t.id}" style="--chip-cor: ${t.cor || '#F97316'}">
+      <span>${t.emoji || '🌟'}</span> ${t.nome}
+    </button>
+  `).join('');
+
+  container.innerHTML = `
+    ${chipsHtml}
+    <div id="nova-turma-inline" class="${turmas.length ? 'hidden' : ''}">
+      <div class="nova-turma-form">
+        <input type="text" id="input-nova-turma" placeholder="Nome da turma (ex: Maternal 2)" maxlength="40">
+        <button type="button" id="btn-confirmar-turma" class="btn-confirmar-turma" title="Confirmar">✓</button>
+      </div>
+    </div>
+    ${turmas.length ? `<button type="button" id="btn-mostrar-nova-turma" class="btn-link-turma">＋ Nova turma</button>` : ''}
+  `;
+
+  // Seleção de chip
+  container.querySelectorAll('.chip-turma').forEach((chip) => {
+    chip.addEventListener('click', () => {
+      container.querySelectorAll('.chip-turma').forEach((c) => c.classList.remove('active'));
+      chip.classList.add('active');
+      document.getElementById('input-turma-id').value = chip.dataset.id;
+    });
+  });
+
+  // Auto-seleciona turma recém-criada
+  if (idParaSelecionar) {
+    const alvo = container.querySelector(`[data-id="${idParaSelecionar}"]`);
+    if (alvo) {
+      alvo.classList.add('active');
+      document.getElementById('input-turma-id').value = idParaSelecionar;
+    }
+  }
+
+  // Mostra campo inline
+  const btnMostrar = document.getElementById('btn-mostrar-nova-turma');
+  if (btnMostrar) {
+    btnMostrar.addEventListener('click', () => {
+      document.getElementById('nova-turma-inline').classList.remove('hidden');
+      document.getElementById('input-nova-turma').focus();
+      btnMostrar.classList.add('hidden');
+    });
+  }
+
+  // Confirma nova turma
+  document.getElementById('btn-confirmar-turma').addEventListener('click', () => confirmarNovaTurma());
+  document.getElementById('input-nova-turma').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); confirmarNovaTurma(); }
+  });
+}
+
+async function confirmarNovaTurma() {
+  const input = document.getElementById('input-nova-turma');
+  const nome = input.value.trim();
+  if (!nome) { input.focus(); return; }
+
+  const btn = document.getElementById('btn-confirmar-turma');
+  btn.disabled = true;
+  btn.textContent = '…';
+  try {
+    const turma = await criarTurma(nome, estado.professora.id);
+    const turmas = await listarTurmas();
+    renderizarChipsTurmas(turmas, turma.id);
+  } catch (err) {
+    mostrarErro('novo-erro', 'Erro ao criar turma: ' + err.message);
+    btn.disabled = false;
+    btn.textContent = '✓';
+  }
 }
 
 function configurarFormNovoPlano() {

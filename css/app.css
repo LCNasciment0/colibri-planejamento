@@ -306,6 +306,53 @@ textarea { resize: vertical; }
   color: var(--chip-cor, var(--laranja));
 }
 
+.nova-turma-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+}
+.nova-turma-form input {
+  flex: 1;
+  padding: 9px 12px;
+  border: 1.5px solid var(--laranja);
+  border-radius: 20px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.88rem;
+  background: #fff;
+  outline: none;
+}
+.btn-confirmar-turma {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--laranja);
+  color: #fff;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.15s;
+}
+.btn-confirmar-turma:disabled { opacity: 0.5; }
+
+.btn-link-turma {
+  background: none;
+  border: 1.5px dashed var(--border);
+  border-radius: 20px;
+  padding: 7px 14px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-link-turma:hover { border-color: var(--laranja); color: var(--laranja); }
+
 .chip-cor {
   width: 36px;
   height: 36px;

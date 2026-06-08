@@ -4,6 +4,16 @@ async function listarTurmas() {
   return data;
 }
 
+async function criarTurma(nome, userId) {
+  const { data, error } = await db
+    .from('turmas')
+    .insert({ nome: nome.trim(), created_by: userId })
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
 async function listarPlanejamentos(professoraId) {
   const { data, error } = await db
     .from('planejamentos')
