@@ -997,7 +997,7 @@ function atualizarRelogio() {
   // Atualiza emoji se já temos o weathercode guardado
   const emojiEl = document.getElementById('clima-emoji');
   if (emojiEl && emojiEl.dataset.weathercode) {
-    emojiEl.textContent = getEmojiClima(Number(emojiEl.dataset.weathercode), agora.getHours());
+    emojiEl.textContent = getEmojiClima(Number(emojiEl.dataset.weathercode), agora.getHours(), agora.getMinutes());
   }
 }
 
@@ -1013,7 +1013,8 @@ async function buscarClima() {
 
     const emojiEl = document.getElementById('clima-emoji');
     emojiEl.dataset.weathercode = code;
-    emojiEl.textContent = getEmojiClima(code, new Date().getHours());
+    const agora2 = new Date();
+    emojiEl.textContent = getEmojiClima(code, agora2.getHours(), agora2.getMinutes());
 
     const infoEl = document.getElementById('clima-info');
     if (infoEl) {
@@ -1025,9 +1026,10 @@ async function buscarClima() {
   }
 }
 
-function getEmojiClima(code, hora) {
-  const noite = hora >= 20 || hora < 6;
-  const tarde = hora >= 18 && hora < 20;
+function getEmojiClima(code, hora, minuto = 0) {
+  const totalMin = hora * 60 + minuto;
+  const noite = totalMin >= 18 * 60 + 30 || totalMin < 6 * 60;
+  const tarde = totalMin >= 17 * 60 + 30 && totalMin < 18 * 60 + 30;
   if (code === 0) return noite ? '🌙' : tarde ? '🌇' : '☀️';
   if (code <= 2)  return noite ? '🌙' : '🌤️';
   if (code === 3) return '☁️';
