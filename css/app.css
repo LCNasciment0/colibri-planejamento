@@ -231,19 +231,19 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
+  gap: 4px;
   background: none;
   border: none;
   cursor: pointer;
   color: var(--muted);
   font-family: 'Nunito', sans-serif;
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 700;
   transition: color 0.15s;
-  padding: 8px 4px;
+  padding: 6px 4px;
 }
 .nav-item.active { color: var(--laranja); }
-.nav-item svg { transition: color 0.15s; }
+.nav-item svg { transition: stroke 0.15s; }
 
 .nav-novo {
   background: var(--laranja);
@@ -251,6 +251,7 @@ html, body {
   border-radius: 16px;
   margin: 8px 4px;
   flex: 0 0 64px;
+  box-shadow: 0 2px 8px rgba(249,115,22,0.35);
 }
 .nav-novo:active { opacity: 0.85; }
 
@@ -630,10 +631,6 @@ textarea { resize: vertical; }
 .card-recente-mes { font-size: 0.72rem; color: var(--muted); font-weight: 700; }
 .card-recente-turma { font-size: 0.88rem; font-weight: 700; color: var(--text); }
 
-/* ============================================================
-   Nav emoji
-   ============================================================ */
-.nav-emoji { font-size: 1.25rem; line-height: 1; }
 
 /* ============================================================
    Semana atual no calendário histórico

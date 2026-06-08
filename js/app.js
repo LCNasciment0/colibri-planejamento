@@ -198,7 +198,7 @@ function renderizarListaMes(planos) {
     return;
   }
   container.innerHTML = planos.map((p) => `
-    <div class="card-plano" data-id="${p.id}" style="--cor-plano: ${p.cor}">
+    <div class="card-plano" data-id="${p.id}" style="--cor-plano: ${p.cor || '#F97316'}">
       <div class="card-plano-cor"></div>
       <div class="card-plano-info">
         <span class="card-plano-turma">${p.turmas?.nome || ''}</span>
