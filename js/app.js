@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   configurarFormNovoPlano();
   configurarFormEvento();
   configurarBotaoLogout();
+  configurarModalCelula();
+  configurarToggleAgenda();
 
   const sessao = await getSession();
   if (sessao) {
@@ -339,8 +341,33 @@ async function abrirEditor(planejamentoId) {
 }
 
 function renderizarEditor(plano) {
+  // Toggle de modo
+  const toggleEditor = document.getElementById('toggle-editor');
+  toggleEditor.querySelectorAll('.toggle-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      toggleEditor.querySelectorAll('.toggle-btn').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (btn.dataset.modo === 'grade') {
+        renderizarGradeEditor(plano);
+      } else {
+        renderizarListaEditor(plano);
+      }
+    });
+  });
+
+  // Inicia no modo lista
+  toggleEditor.querySelector('[data-modo="lista"]').classList.add('active');
+  toggleEditor.querySelector('[data-modo="grade"]').classList.remove('active');
+  renderizarListaEditor(plano);
+
+  // Exportar PDF
+  document.getElementById('btn-exportar-pdf').onclick = () => gerarPDF(plano.id);
+}
+
+function renderizarListaEditor(plano) {
   const abas = document.getElementById('semanas-abas');
   const conteudo = document.getElementById('semanas-conteudo');
+  abas.classList.remove('hidden');
 
   abas.innerHTML = plano.semanas.map((s, i) => `
     <button class="aba-semana ${i === 0 ? 'active' : ''}" data-semana="${i}">
@@ -364,7 +391,6 @@ function renderizarEditor(plano) {
     </div>
   `).join('');
 
-  // Navegação entre abas
   abas.querySelectorAll('.aba-semana').forEach((btn) => {
     btn.addEventListener('click', () => {
       const idx = btn.dataset.semana;
@@ -375,7 +401,6 @@ function renderizarEditor(plano) {
     });
   });
 
-  // Autosave com debounce
   const txtSalvo = document.getElementById('txt-salvo');
   conteudo.querySelectorAll('.textarea-atividade').forEach((textarea) => {
     textarea.addEventListener('input', () => {
@@ -386,9 +411,91 @@ function renderizarEditor(plano) {
       });
     });
   });
+}
 
-  // Exportar PDF
-  document.getElementById('btn-exportar-pdf').onclick = () => gerarPDF(plano.id);
+function renderizarGradeEditor(plano) {
+  const abas = document.getElementById('semanas-abas');
+  const conteudo = document.getElementById('semanas-conteudo');
+  abas.classList.add('hidden');
+
+  const dias = ['segunda', 'terca', 'quarta', 'quinta', 'sexta'];
+  const labelDias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
+
+  const linhas = plano.semanas.map((semana) => {
+    const celulas = dias.map((dia) => {
+      const ativ = semana.atividades.find((a) => a.dia_semana === dia);
+      const resumo = ativ?.conteudo
+        ? ativ.conteudo.split('\n').slice(0, 2).join('\n')
+        : '';
+      return `<td class="grade-celula" data-id="${ativ?.id || ''}" data-semana="${semana.numero}" data-dia="${dia}">
+        <span class="grade-resumo">${resumo || '<span class="grade-vazia">—</span>'}</span>
+      </td>`;
+    }).join('');
+    return `<tr><th class="grade-semana-label">S${semana.numero}</th>${celulas}</tr>`;
+  }).join('');
+
+  const cabecalho = labelDias.map((l) => `<th class="grade-cabecalho">${l}</th>`).join('');
+
+  conteudo.innerHTML = `
+    <div class="grade-wrapper">
+      <table class="grade-mensal">
+        <thead><tr><th></th>${cabecalho}</tr></thead>
+        <tbody>${linhas}</tbody>
+      </table>
+    </div>
+  `;
+
+  conteudo.querySelectorAll('.grade-celula').forEach((celula) => {
+    celula.addEventListener('click', () => abrirModalCelula(celula, plano));
+  });
+}
+
+function abrirModalCelula(celula, plano) {
+  const atividadeId = celula.dataset.id;
+  const dia = celula.dataset.dia;
+  const semanaNum = celula.dataset.semana;
+  const labelDia = { segunda: 'Segunda', terca: 'Terça', quarta: 'Quarta', quinta: 'Quinta', sexta: 'Sexta' }[dia];
+
+  let conteudoAtual = '';
+  plano.semanas.forEach((s) => {
+    if (String(s.numero) === String(semanaNum)) {
+      const a = s.atividades.find((av) => av.dia_semana === dia);
+      if (a) conteudoAtual = a.conteudo || '';
+    }
+  });
+
+  document.getElementById('modal-celula-titulo').textContent = `Semana ${semanaNum} · ${labelDia}`;
+  document.getElementById('modal-celula-textarea').value = conteudoAtual;
+  document.getElementById('modal-celula').classList.remove('hidden');
+
+  document.getElementById('btn-salvar-celula').onclick = async () => {
+    const novoConteudo = document.getElementById('modal-celula-textarea').value;
+    if (atividadeId) {
+      await salvarAtividade(atividadeId, novoConteudo);
+      // Atualiza o plano em memória
+      plano.semanas.forEach((s) => {
+        if (String(s.numero) === String(semanaNum)) {
+          const a = s.atividades.find((av) => av.dia_semana === dia);
+          if (a) a.conteudo = novoConteudo;
+        }
+      });
+      // Atualiza célula visualmente
+      const resumo = novoConteudo.split('\n').slice(0, 2).join('\n');
+      celula.querySelector('.grade-resumo').innerHTML = resumo || '<span class="grade-vazia">—</span>';
+    }
+    document.getElementById('modal-celula').classList.add('hidden');
+  };
+}
+
+function configurarModalCelula() {
+  document.getElementById('btn-fechar-celula').addEventListener('click', () => {
+    document.getElementById('modal-celula').classList.add('hidden');
+  });
+  document.getElementById('modal-celula').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('modal-celula')) {
+      document.getElementById('modal-celula').classList.add('hidden');
+    }
+  });
 }
 
 function formatarDiaSemana(dia) {
@@ -400,6 +507,14 @@ function formatarDiaSemana(dia) {
 
 async function carregarAgenda() {
   if (!estado.professora) return;
+
+  // Sempre inicia no modo lista ao entrar na tela
+  const toggle = document.getElementById('toggle-agenda');
+  toggle.querySelectorAll('.toggle-btn').forEach((b) => b.classList.remove('active'));
+  toggle.querySelector('[data-modo="lista"]').classList.add('active');
+  document.getElementById('agenda-calendario').classList.add('hidden');
+  document.getElementById('lista-eventos').classList.remove('hidden');
+
   try {
     const eventos = await listarEventosFuturos(estado.professora.id);
     renderizarAgenda(eventos);
@@ -591,6 +706,137 @@ function mostrarErro(idElemento, mensagem) {
 
 function ocultarErro(idElemento) {
   document.getElementById(idElemento).classList.add('hidden');
+}
+
+// --- Calendário da Agenda ---
+
+const estadoAgendaCal = {
+  mes: new Date().getMonth() + 1,
+  ano: new Date().getFullYear(),
+  eventos: [],
+};
+
+function configurarToggleAgenda() {
+  const toggle = document.getElementById('toggle-agenda');
+  toggle.querySelectorAll('.toggle-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      toggle.querySelectorAll('.toggle-btn').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      const modoCalendario = btn.dataset.modo === 'calendario';
+      document.getElementById('agenda-calendario').classList.toggle('hidden', !modoCalendario);
+      document.getElementById('lista-eventos').classList.toggle('hidden', modoCalendario);
+      if (modoCalendario) renderizarCalendarioAgenda();
+    });
+  });
+
+  document.getElementById('btn-agenda-mes-ant').addEventListener('click', () => {
+    estadoAgendaCal.mes--;
+    if (estadoAgendaCal.mes < 1) { estadoAgendaCal.mes = 12; estadoAgendaCal.ano--; }
+    renderizarCalendarioAgenda();
+  });
+  document.getElementById('btn-agenda-mes-prox').addEventListener('click', () => {
+    estadoAgendaCal.mes++;
+    if (estadoAgendaCal.mes > 12) { estadoAgendaCal.mes = 1; estadoAgendaCal.ano++; }
+    renderizarCalendarioAgenda();
+  });
+}
+
+async function renderizarCalendarioAgenda() {
+  if (!estado.professora) return;
+  const { mes, ano } = estadoAgendaCal;
+  const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  document.getElementById('txt-agenda-mes-ano').textContent = `${meses[mes - 1]} ${ano}`;
+
+  try {
+    const eventos = await listarEventosMes(estado.professora.id, mes, ano);
+    estadoAgendaCal.eventos = eventos;
+
+    const eventosPorDia = {};
+    eventos.forEach((ev) => {
+      if (!eventosPorDia[ev.data]) eventosPorDia[ev.data] = [];
+      eventosPorDia[ev.data].push(ev);
+    });
+
+    const grid = document.getElementById('agenda-cal-grid');
+    renderizarCalendarioAgendaGrid(grid, mes, ano, eventosPorDia);
+
+    // Clique nos dias
+    grid.querySelectorAll('.cal-dia:not(.vazio)').forEach((cel) => {
+      cel.addEventListener('click', () => {
+        const dataStr = cel.dataset.data;
+        const evsDia = eventosPorDia[dataStr] || [];
+        mostrarDetalheAgendaDia(dataStr, evsDia);
+        // Marca selecionado
+        grid.querySelectorAll('.cal-dia').forEach((c) => c.classList.remove('selecionado'));
+        if (evsDia.length) cel.classList.add('selecionado');
+      });
+    });
+
+    document.getElementById('agenda-cal-detalhe').classList.add('hidden');
+  } catch (err) {
+    console.error('Erro ao carregar calendário agenda:', err);
+  }
+}
+
+function renderizarCalendarioAgendaGrid(container, mes, ano, eventosPorDia) {
+  const primeiroDia = new Date(ano, mes - 1, 1).getDay();
+  const totalDias = new Date(ano, mes, 0).getDate();
+  const hoje = new Date();
+
+  const cabecalho = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
+    .map((d) => `<div class="cal-dia-semana">${d}</div>`).join('');
+
+  let celulas = '';
+  for (let i = 0; i < primeiroDia; i++) celulas += '<div class="cal-dia vazio"></div>';
+
+  for (let d = 1; d <= totalDias; d++) {
+    const dataStr = `${ano}-${String(mes).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const ehHoje = d === hoje.getDate() && mes === hoje.getMonth() + 1 && ano === hoje.getFullYear();
+    const evsDia = eventosPorDia[dataStr] || [];
+    const pontos = evsDia.slice(0, 3).map((ev) =>
+      `<span class="cal-ponto-cor" style="background:${CORES_CATEGORIA[ev.categoria] || '#9CA3AF'}"></span>`
+    ).join('');
+
+    let classes = 'cal-dia';
+    if (ehHoje) classes += ' hoje';
+    if (evsDia.length) classes += ' tem-evento';
+
+    celulas += `<div class="${classes}" data-data="${dataStr}">
+      <span>${d}</span>
+      ${evsDia.length ? `<span class="cal-pontos-wrap">${pontos}</span>` : ''}
+    </div>`;
+  }
+
+  container.innerHTML = `
+    <div class="cal-cabecalho">${cabecalho}</div>
+    <div class="cal-dias">${celulas}</div>
+  `;
+}
+
+function mostrarDetalheAgendaDia(dataStr, eventos) {
+  const detalhe = document.getElementById('agenda-cal-detalhe');
+  if (!eventos.length) { detalhe.classList.add('hidden'); return; }
+
+  const [ano, mes, dia] = dataStr.split('-').map(Number);
+  const data = new Date(ano, mes - 1, dia);
+  const labelData = data.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+
+  detalhe.innerHTML = `
+    <h4 class="detalhe-data-label">${labelData}</h4>
+    ${eventos.map((ev) => `
+      <div class="card-evento" style="--ev-cor: ${CORES_CATEGORIA[ev.categoria] || '#9CA3AF'}">
+        <div class="ev-barra"></div>
+        <div class="ev-info">
+          <span class="ev-titulo">${ev.titulo}</span>
+          <span class="ev-meta">
+            ${ev.hora_inicio ? ev.hora_inicio.slice(0, 5) : 'Dia todo'}
+            ${ev.local ? '· ' + ev.local : ''}
+          </span>
+        </div>
+      </div>
+    `).join('')}
+  `;
+  detalhe.classList.remove('hidden');
 }
 
 // --- Header dinâmico (clima + hora + data) ---

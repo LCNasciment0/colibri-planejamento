@@ -199,6 +199,10 @@
           <h2 id="editor-titulo" style="font-size:1.1rem">Planejamento</h2>
           <p id="editor-subtitulo" class="subtitulo"></p>
         </div>
+        <div class="toggle-modo" id="toggle-editor">
+          <button class="toggle-btn active" data-modo="lista" title="Lista">📋</button>
+          <button class="toggle-btn" data-modo="grade" title="Grade">📅</button>
+        </div>
         <button id="btn-exportar-pdf" class="btn-icon" title="Exportar PDF">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -220,9 +224,24 @@
     <!-- Tela: Agenda -->
     <div id="screen-agenda" class="screen">
       <header class="topo">
-        <h2>Agenda</h2>
+        <h2 style="flex:1">Agenda</h2>
+        <div class="toggle-modo" id="toggle-agenda">
+          <button class="toggle-btn active" data-modo="lista" title="Lista">📋</button>
+          <button class="toggle-btn" data-modo="calendario" title="Calendário">📅</button>
+        </div>
       </header>
       <main class="conteudo">
+        <!-- Modo Calendário da Agenda -->
+        <div id="agenda-calendario" class="hidden">
+          <div class="calendario-nav">
+            <button id="btn-agenda-mes-ant" class="btn-icon">&#8249;</button>
+            <span id="txt-agenda-mes-ano" class="mes-ano-label"></span>
+            <button id="btn-agenda-mes-prox" class="btn-icon">&#8250;</button>
+          </div>
+          <div id="agenda-cal-grid" class="calendario-grid agenda-cal-grid"></div>
+          <div id="agenda-cal-detalhe" class="agenda-cal-detalhe hidden"></div>
+        </div>
+        <!-- Modo Lista (padrão) -->
         <div id="lista-eventos" class="lista-eventos">
           <p class="empty-state">Nenhum compromisso futuro.</p>
         </div>
@@ -317,6 +336,19 @@
             <button type="submit" class="btn-primary">Salvar</button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- Modal: Edição célula da grade -->
+    <div id="modal-celula" class="modal-overlay hidden">
+      <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <h3 class="modal-titulo" id="modal-celula-titulo">Atividades</h3>
+        <textarea id="modal-celula-textarea" class="textarea-atividade" rows="6" placeholder="Atividades do dia..."></textarea>
+        <div class="modal-acoes" style="margin-top:12px">
+          <button type="button" id="btn-fechar-celula" class="btn-secondary">Cancelar</button>
+          <button type="button" id="btn-salvar-celula" class="btn-primary">Salvar</button>
+        </div>
       </div>
     </div>
 

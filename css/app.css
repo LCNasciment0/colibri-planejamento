@@ -735,6 +735,133 @@ textarea { resize: vertical; }
 #modal-evento form { display: flex; flex-direction: column; gap: 14px; }
 
 /* ============================================================
+   Toggle de modo (📋 / 📅)
+   ============================================================ */
+.toggle-modo {
+  display: flex;
+  background: var(--border);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.toggle-btn {
+  background: none;
+  border: none;
+  border-radius: 8px;
+  padding: 5px 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  line-height: 1;
+}
+.toggle-btn.active {
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+/* ============================================================
+   Grade Mensal do Editor
+   ============================================================ */
+.grade-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius);
+}
+.grade-mensal {
+  width: 100%;
+  min-width: 480px;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.grade-mensal th,
+.grade-mensal td {
+  border: 1px solid var(--border);
+  padding: 0;
+}
+.grade-cabecalho {
+  background: var(--laranja);
+  color: #fff;
+  font-family: 'Fredoka One', cursive;
+  font-size: 0.82rem;
+  text-align: center;
+  padding: 8px 4px !important;
+  white-space: nowrap;
+}
+.grade-semana-label {
+  background: #FFF0E0;
+  color: var(--laranja);
+  font-family: 'Fredoka One', cursive;
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 0 8px !important;
+  white-space: nowrap;
+  min-width: 32px;
+}
+.grade-celula {
+  vertical-align: top;
+  cursor: pointer;
+  transition: background 0.15s;
+  min-height: 72px;
+  padding: 8px !important;
+}
+.grade-celula:hover { background: #FFF8F0; }
+.grade-celula:active { background: #FFE8D5; }
+.grade-resumo {
+  font-size: 0.75rem;
+  color: var(--text);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: pre-wrap;
+}
+.grade-vazia { color: var(--muted); }
+
+/* ============================================================
+   Calendário da Agenda (modo calendário)
+   ============================================================ */
+.agenda-cal-grid .cal-dia { cursor: pointer; }
+.agenda-cal-grid .cal-dia:hover:not(.vazio) { background: #F3F4F6; }
+.agenda-cal-grid .cal-dia.selecionado {
+  background: var(--laranja);
+  color: #fff;
+}
+.agenda-cal-grid .cal-dia.selecionado .cal-ponto-cor { border-color: #fff; }
+
+.cal-pontos-wrap {
+  display: flex;
+  gap: 2px;
+  position: absolute;
+  bottom: 3px;
+  justify-content: center;
+}
+.cal-ponto-cor {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.agenda-cal-detalhe {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.detalhe-data-label {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1rem;
+  color: var(--text);
+  margin-bottom: 4px;
+  text-transform: capitalize;
+}
+
+/* ============================================================
    Utilitários
    ============================================================ */
 .hidden { display: none !important; }
