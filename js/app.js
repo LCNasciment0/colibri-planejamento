@@ -48,6 +48,7 @@ async function entrarNoApp(sessao) {
   document.getElementById('app-shell').classList.remove('hidden');
 
   atualizarSaudacao();
+  iniciarHeaderDinamico();
   navegarPara('home');
   carregarHome();
 }
@@ -590,4 +591,64 @@ function mostrarErro(idElemento, mensagem) {
 
 function ocultarErro(idElemento) {
   document.getElementById(idElemento).classList.add('hidden');
+}
+
+// --- Header dinâmico (clima + hora + data) ---
+
+function iniciarHeaderDinamico() {
+  atualizarRelogio();
+  setInterval(atualizarRelogio, 60000);
+  buscarClima();
+}
+
+function atualizarRelogio() {
+  const agora = new Date();
+  const diasSemana = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+  const meses = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  const diaSem = diasSemana[agora.getDay()];
+  const dia = agora.getDate().toString().padStart(2, '0');
+  const mes = meses[agora.getMonth()];
+  const hora = agora.getHours().toString().padStart(2, '0');
+  const min = agora.getMinutes().toString().padStart(2, '0');
+
+  const el = document.getElementById('clima-info');
+  if (el) {
+    const tempEl = el.dataset.temp || '';
+    const sep = tempEl ? ' · ' : '';
+    el.textContent = `${tempEl}${sep}${diaSem}, ${dia} de ${mes} · ${hora}:${min}`;
+  }
+}
+
+async function buscarClima() {
+  try {
+    const res = await fetch(
+      'https://api.open-meteo.com/v1/forecast?latitude=-22.11&longitude=-43.18&current=temperature_2m,weathercode&timezone=America%2FSao_Paulo'
+    );
+    if (!res.ok) return;
+    const dados = await res.json();
+    const temp = Math.round(dados.current.temperature_2m);
+    const code = dados.current.weathercode;
+
+    const emoji = emojiClima(code);
+    document.getElementById('clima-emoji').textContent = emoji;
+
+    const infoEl = document.getElementById('clima-info');
+    if (infoEl) {
+      infoEl.dataset.temp = `${temp}°C`;
+      atualizarRelogio();
+    }
+  } catch (_) {
+    atualizarRelogio();
+  }
+}
+
+function emojiClima(code) {
+  if (code === 0) return '☀️';
+  if (code <= 2) return '🌤️';
+  if (code === 3) return '☁️';
+  if (code <= 48) return '🌫️';
+  if (code <= 67) return '🌧️';
+  if (code <= 77) return '❄️';
+  if (code <= 82) return '🌦️';
+  return '⛈️';
 }
