@@ -147,9 +147,6 @@ function renderizarListaRecentes(planos) {
   const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   container.innerHTML = planos.map((p) => `
     <div class="card-recente" data-id="${p.id}" style="--cor-plano: ${p.cor || '#F97316'}">
-      <div class="card-recente-top">
-        <span class="badge-status ${p.status}">${p.status === 'concluido' ? 'Concluído' : 'Em edição'}</span>
-      </div>
       <span class="card-recente-mes">${meses[p.mes - 1]} ${p.ano}</span>
       <span class="card-recente-turma">${p.turmas?.nome || ''}</span>
     </div>
@@ -372,6 +369,34 @@ function renderizarEditor(plano) {
   document.getElementById('btn-exportar-pdf').onclick = () => gerarPDF(plano.id);
 }
 
+function calcularDatasSemanasPlano(mes, ano) {
+  // Encontra a primeira Segunda-feira do mês
+  const primeiroDia = new Date(ano, mes - 1, 1);
+  const diaSemana = primeiroDia.getDay(); // 0=Dom, 1=Seg...
+  const diasAteSegunda = diaSemana === 0 ? 1 : diaSemana === 1 ? 0 : 8 - diaSemana;
+  const primeiraSegunda = new Date(ano, mes - 1, 1 + diasAteSegunda);
+
+  // Para cada semana (1-4), retorna data de Seg a Sex
+  const DIAS_KEY = ['segunda', 'terca', 'quarta', 'quinta', 'sexta'];
+  return [0, 1, 2, 3].map((semIdx) => {
+    const seg = new Date(primeiraSegunda);
+    seg.setDate(seg.getDate() + semIdx * 7);
+    const datas = {};
+    DIAS_KEY.forEach((dia, i) => {
+      const d = new Date(seg);
+      d.setDate(d.getDate() + i);
+      datas[dia] = d;
+    });
+    return datas;
+  });
+}
+
+function formatarDataCurta(date) {
+  const dia = date.getDate().toString().padStart(2, '0');
+  const mes = (date.getMonth() + 1).toString().padStart(2, '0');
+  return `${dia}/${mes}`;
+}
+
 function renderizarListaEditor(plano) {
   const abas = document.getElementById('semanas-abas');
   const conteudo = document.getElementById('semanas-conteudo');
@@ -383,11 +408,18 @@ function renderizarListaEditor(plano) {
     </button>
   `).join('');
 
-  conteudo.innerHTML = plano.semanas.map((semana, i) => `
+  const datasSemanais = calcularDatasSemanasPlano(plano.mes, plano.ano);
+
+  conteudo.innerHTML = plano.semanas.map((semana, i) => {
+    const datas = datasSemanais[i] || {};
+    return `
     <div class="semana-painel ${i === 0 ? 'active' : ''}" data-semana="${i}" data-semana-num="${semana.numero}">
-      ${semana.atividades.map((ativ) => `
+      ${semana.atividades.map((ativ) => {
+        const dataReal = datas[ativ.dia_semana];
+        const labelData = dataReal ? `, ${formatarDataCurta(dataReal)}` : '';
+        return `
         <div class="card-dia">
-          <label class="dia-label">${formatarDiaSemana(ativ.dia_semana)}</label>
+          <label class="dia-label">${formatarDiaSemana(ativ.dia_semana)}<span class="dia-data">${labelData}</span></label>
           <textarea
             class="textarea-atividade"
             data-id="${ativ.id}"
@@ -396,10 +428,10 @@ function renderizarListaEditor(plano) {
             rows="4"
           >${ativ.conteudo || ''}</textarea>
           <button class="btn-salvar-dia" data-id="${ativ.id}">💾 Salvar</button>
-        </div>
-      `).join('')}
-    </div>
-  `).join('');
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
 
   // Registra botões salvar por dia
   conteudo.querySelectorAll('.btn-salvar-dia').forEach((btn) => {
@@ -498,14 +530,21 @@ function renderizarGradeEditor(plano) {
   const dias = ['segunda', 'terca', 'quarta', 'quinta', 'sexta'];
   const labelDias = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex'];
 
-  const linhas = plano.semanas.map((semana) => {
+  const datasSemanais = calcularDatasSemanasPlano(plano.mes, plano.ano);
+
+  const linhas = plano.semanas.map((semana, semIdx) => {
+    const datas = datasSemanais[semIdx] || {};
     const celulas = dias.map((dia) => {
       const ativ = semana.atividades.find((a) => a.dia_semana === dia);
       const temConteudo = ativ?.conteudo?.trim();
-      const resumoHtml = temConteudo
+      const dataReal = datas[dia];
+      const dataHtml = dataReal
+        ? `<span class="grade-data">${formatarDataCurta(dataReal)}</span>`
+        : '';
+      const conteudoHtml = temConteudo
         ? `<span class="grade-resumo">${escapeHtml(ativ.conteudo)}</span>`
         : `<span class="grade-vazia">+</span>`;
-      return `<td class="grade-celula" data-id="${ativ?.id || ''}" data-semana="${semana.numero}" data-dia="${dia}">${resumoHtml}</td>`;
+      return `<td class="grade-celula" data-id="${ativ?.id || ''}" data-semana="${semana.numero}" data-dia="${dia}">${dataHtml}${conteudoHtml}</td>`;
     }).join('');
     return `<tr><th class="grade-semana-label">S${semana.numero}</th>${celulas}</tr>`;
   }).join('');

@@ -777,6 +777,12 @@ textarea { resize: vertical; }
   color: var(--laranja);
   margin-bottom: 8px;
 }
+.dia-data {
+  font-weight: 600;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-left: 2px;
+}
 .textarea-atividade {
   border: 1.5px solid var(--border);
   border-radius: 10px;
@@ -1050,6 +1056,13 @@ textarea { resize: vertical; }
 }
 .grade-celula:hover { background: #FFF8F0; }
 .grade-celula:active { background: #FFE8D5; }
+.grade-data {
+  display: block;
+  font-size: 0.65rem;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
 .grade-resumo {
   font-size: 0.72rem;
   color: var(--text);
