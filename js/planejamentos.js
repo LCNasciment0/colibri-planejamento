@@ -108,6 +108,15 @@ async function salvarAtividade(atividadeId, conteudo) {
   if (error) throw error;
 }
 
+async function buscarAtividadesSemana(semanaId) {
+  const { data, error } = await db
+    .from('atividades')
+    .select('*')
+    .eq('semana_id', semanaId);
+  if (error) throw error;
+  return data;
+}
+
 async function deletarPlanejamento(id) {
   const { error } = await db.from('planejamentos').delete().eq('id', id);
   if (error) throw error;

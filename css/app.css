@@ -800,6 +800,25 @@ textarea { resize: vertical; }
   color: var(--verde);
 }
 
+.btn-salvar-dia {
+  margin-top: 8px;
+  width: 100%;
+  padding: 9px 14px;
+  border: none;
+  border-radius: 10px;
+  background: var(--verde);
+  color: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s, background 0.2s;
+}
+.btn-salvar-dia:disabled { opacity: 0.7; cursor: not-allowed; }
+.btn-salvar-dia.salvando { background: #6B7280; }
+.btn-salvar-dia.salvo    { background: #059669; }
+.btn-salvar-dia.erro     { background: #EF4444; }
+
 /* ============================================================
    Agenda / Eventos
    ============================================================ */

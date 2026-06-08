@@ -376,47 +376,116 @@ function renderizarListaEditor(plano) {
   abas.classList.remove('hidden');
 
   abas.innerHTML = plano.semanas.map((s, i) => `
-    <button class="aba-semana ${i === 0 ? 'active' : ''}" data-semana="${i}">
+    <button class="aba-semana ${i === 0 ? 'active' : ''}" data-semana="${i}" data-semana-id="${s.id}">
       Semana ${s.numero}
     </button>
   `).join('');
 
   conteudo.innerHTML = plano.semanas.map((semana, i) => `
-    <div class="semana-painel ${i === 0 ? 'active' : ''}" data-semana="${i}">
+    <div class="semana-painel ${i === 0 ? 'active' : ''}" data-semana="${i}" data-semana-num="${semana.numero}">
       ${semana.atividades.map((ativ) => `
         <div class="card-dia">
           <label class="dia-label">${formatarDiaSemana(ativ.dia_semana)}</label>
           <textarea
             class="textarea-atividade"
             data-id="${ativ.id}"
+            data-original="${escapeHtml(ativ.conteudo || '')}"
             placeholder="Atividades de ${formatarDiaSemana(ativ.dia_semana)}..."
             rows="4"
           >${ativ.conteudo || ''}</textarea>
+          <button class="btn-salvar-dia" data-id="${ativ.id}">💾 Salvar</button>
         </div>
       `).join('')}
     </div>
   `).join('');
 
-  abas.querySelectorAll('.aba-semana').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const idx = btn.dataset.semana;
-      abas.querySelectorAll('.aba-semana').forEach((b) => b.classList.remove('active'));
-      conteudo.querySelectorAll('.semana-painel').forEach((p) => p.classList.remove('active'));
-      btn.classList.add('active');
-      conteudo.querySelector(`[data-semana="${idx}"]`).classList.add('active');
+  // Registra botões salvar por dia
+  conteudo.querySelectorAll('.btn-salvar-dia').forEach((btn) => {
+    btn.addEventListener('click', () => salvarDia(btn));
+  });
+
+  // Marca textarea como alterado
+  conteudo.querySelectorAll('.textarea-atividade').forEach((textarea) => {
+    textarea.addEventListener('input', () => {
+      textarea.dataset.alterado = textarea.value !== textarea.dataset.original ? '1' : '';
     });
   });
 
-  const txtSalvo = document.getElementById('txt-salvo');
-  conteudo.querySelectorAll('.textarea-atividade').forEach((textarea) => {
-    textarea.addEventListener('input', () => {
-      txtSalvo.classList.add('hidden');
-      salvarAtividadeDebounce(textarea.dataset.id, textarea.value, () => {
-        txtSalvo.classList.remove('hidden');
-        setTimeout(() => txtSalvo.classList.add('hidden'), 2000);
-      });
+  // Navegação entre abas com verificação de não salvos
+  abas.querySelectorAll('.aba-semana').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const idxAtivo = conteudo.querySelector('.semana-painel.active')?.dataset.semana;
+      const numAtivo = conteudo.querySelector('.semana-painel.active')?.dataset.semanaNum;
+
+      // Checa não salvos no painel atual
+      if (idxAtivo !== undefined) {
+        const naoSalvos = conteudo.querySelectorAll(
+          `.semana-painel[data-semana="${idxAtivo}"] .textarea-atividade[data-alterado="1"]`
+        );
+        if (naoSalvos.length) {
+          const confirmar = confirm(
+            `Você tem alterações não salvas na Semana ${numAtivo}.\nDeseja continuar sem salvar?`
+          );
+          if (!confirmar) return;
+          // Descarta marcação de alterado
+          naoSalvos.forEach((t) => { t.dataset.alterado = ''; });
+        }
+      }
+
+      const novoIdx = btn.dataset.semana;
+      const semanaId = btn.dataset.semanaId;
+
+      // Troca visual imediata
+      abas.querySelectorAll('.aba-semana').forEach((b) => b.classList.remove('active'));
+      conteudo.querySelectorAll('.semana-painel').forEach((p) => p.classList.remove('active'));
+      btn.classList.add('active');
+      const painel = conteudo.querySelector(`[data-semana="${novoIdx}"]`);
+      painel.classList.add('active');
+
+      // Recarrega dados frescos do Supabase para essa semana
+      try {
+        const atividades = await buscarAtividadesSemana(semanaId);
+        painel.querySelectorAll('.textarea-atividade').forEach((ta) => {
+          const ativ = atividades.find((a) => a.id === ta.dataset.id);
+          if (ativ) {
+            ta.value = ativ.conteudo || '';
+            ta.dataset.original = escapeHtml(ativ.conteudo || '');
+            ta.dataset.alterado = '';
+          }
+        });
+      } catch (err) {
+        console.error('Erro ao recarregar semana:', err);
+      }
     });
   });
+}
+
+async function salvarDia(btn) {
+  const atividadeId = btn.dataset.id;
+  const textarea = btn.closest('.card-dia').querySelector('.textarea-atividade');
+  const novoConteudo = textarea.value;
+
+  btn.disabled = true;
+  btn.textContent = 'Salvando...';
+  btn.className = 'btn-salvar-dia salvando';
+
+  try {
+    await salvarAtividade(atividadeId, novoConteudo);
+    textarea.dataset.original = escapeHtml(novoConteudo);
+    textarea.dataset.alterado = '';
+    btn.textContent = '✅ Salvo!';
+    btn.className = 'btn-salvar-dia salvo';
+    setTimeout(() => {
+      btn.textContent = '💾 Salvar';
+      btn.className = 'btn-salvar-dia';
+      btn.disabled = false;
+    }, 2000);
+  } catch (err) {
+    btn.textContent = '❌ Erro — tentar novamente';
+    btn.className = 'btn-salvar-dia erro';
+    btn.disabled = false;
+    console.error('Erro ao salvar atividade:', err);
+  }
 }
 
 function renderizarGradeEditor(plano) {
