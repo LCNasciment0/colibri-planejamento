@@ -67,6 +67,29 @@ html, body {
 
 .login-form { display: flex; flex-direction: column; gap: 16px; }
 
+.login-link {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--laranja);
+  font-weight: 700;
+  font-size: 0.85rem;
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+.ok-msg {
+  color: var(--verde);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: center;
+}
+
 /* ============================================================
    App Shell
    ============================================================ */

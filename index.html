@@ -24,6 +24,8 @@
         <h1 class="logo-text">Colibri</h1>
         <p class="logo-sub">Planejamento</p>
       </div>
+
+      <!-- Formulário de Login -->
       <form id="form-login" class="login-form">
         <div class="field-group">
           <label for="input-email">E-mail</label>
@@ -35,6 +37,35 @@
         </div>
         <p id="login-erro" class="erro-msg hidden"></p>
         <button type="submit" id="btn-login" class="btn-primary btn-full">Entrar</button>
+        <p class="login-link">
+          Primeira vez? <button type="button" id="btn-ir-cadastro" class="link-btn">Criar conta</button>
+        </p>
+      </form>
+
+      <!-- Formulário de Cadastro -->
+      <form id="form-cadastro" class="login-form hidden">
+        <div class="field-group">
+          <label for="cad-nome">Nome completo</label>
+          <input type="text" id="cad-nome" placeholder="Ex: Jéssica Cristina" autocomplete="name" required>
+        </div>
+        <div class="field-group">
+          <label for="cad-email">E-mail</label>
+          <input type="email" id="cad-email" placeholder="seu@email.com" autocomplete="email" required>
+        </div>
+        <div class="field-group">
+          <label for="cad-senha">Senha</label>
+          <input type="password" id="cad-senha" placeholder="Mínimo 6 caracteres" autocomplete="new-password" required>
+        </div>
+        <div class="field-group">
+          <label for="cad-senha2">Confirmar senha</label>
+          <input type="password" id="cad-senha2" placeholder="Repita a senha" autocomplete="new-password" required>
+        </div>
+        <p id="cadastro-erro" class="erro-msg hidden"></p>
+        <p id="cadastro-ok" class="ok-msg hidden"></p>
+        <button type="submit" id="btn-cadastrar" class="btn-primary btn-full">Criar conta</button>
+        <p class="login-link">
+          Já tenho conta. <button type="button" id="btn-ir-login" class="link-btn">Entrar</button>
+        </p>
       </form>
     </div>
   </div>

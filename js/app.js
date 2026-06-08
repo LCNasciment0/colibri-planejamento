@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   registrarServiceWorker();
   configurarNavegacao();
   configurarFormLogin();
+  configurarFormCadastro();
   configurarFormNovoPlano();
   configurarFormEvento();
   configurarBotaoLogout();
@@ -462,6 +463,57 @@ function configurarFormLogin() {
       mostrarErro('login-erro', 'E-mail ou senha incorretos.');
       btn.disabled = false;
       btn.textContent = 'Entrar';
+    }
+  });
+}
+
+function configurarFormCadastro() {
+  document.getElementById('btn-ir-cadastro').addEventListener('click', () => {
+    document.getElementById('form-login').classList.add('hidden');
+    document.getElementById('form-cadastro').classList.remove('hidden');
+    ocultarErro('cadastro-erro');
+    document.getElementById('cadastro-ok').classList.add('hidden');
+  });
+
+  document.getElementById('btn-ir-login').addEventListener('click', () => {
+    document.getElementById('form-cadastro').classList.add('hidden');
+    document.getElementById('form-login').classList.remove('hidden');
+    ocultarErro('login-erro');
+  });
+
+  document.getElementById('form-cadastro').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    ocultarErro('cadastro-erro');
+    document.getElementById('cadastro-ok').classList.add('hidden');
+
+    const nome = document.getElementById('cad-nome').value.trim();
+    const email = document.getElementById('cad-email').value.trim();
+    const senha = document.getElementById('cad-senha').value;
+    const senha2 = document.getElementById('cad-senha2').value;
+
+    if (senha !== senha2) {
+      mostrarErro('cadastro-erro', 'As senhas não coincidem.');
+      return;
+    }
+    if (senha.length < 6) {
+      mostrarErro('cadastro-erro', 'A senha deve ter pelo menos 6 caracteres.');
+      return;
+    }
+
+    const btn = document.getElementById('btn-cadastrar');
+    btn.disabled = true;
+    btn.textContent = 'Criando conta...';
+    try {
+      await fazerCadastro(nome, email, senha);
+      document.getElementById('form-cadastro').reset();
+      const okMsg = document.getElementById('cadastro-ok');
+      okMsg.textContent = 'Conta criada! Faça login para continuar.';
+      okMsg.classList.remove('hidden');
+    } catch (err) {
+      mostrarErro('cadastro-erro', err.message || 'Erro ao criar conta.');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Criar conta';
     }
   });
 }
