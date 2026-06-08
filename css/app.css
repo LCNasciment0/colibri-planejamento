@@ -816,48 +816,53 @@ textarea { resize: vertical; }
 }
 .grade-mensal {
   width: 100%;
-  min-width: 480px;
+  min-width: 340px;
   border-collapse: collapse;
   background: #fff;
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  table-layout: fixed;
 }
 .grade-mensal th,
 .grade-mensal td {
   border: 1px solid var(--border);
   padding: 0;
 }
+.grade-mensal colgroup col.col-semana { width: 28px; }
 .grade-cabecalho {
   background: var(--laranja);
   color: #fff;
   font-family: 'Fredoka One', cursive;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   text-align: center;
-  padding: 8px 4px !important;
+  padding: 7px 2px !important;
   white-space: nowrap;
 }
 .grade-semana-label {
   background: #FFF0E0;
   color: var(--laranja);
   font-family: 'Fredoka One', cursive;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   text-align: center;
-  padding: 0 8px !important;
+  padding: 0 4px !important;
   white-space: nowrap;
-  min-width: 32px;
+  width: 28px;
 }
 .grade-celula {
   vertical-align: top;
   cursor: pointer;
   transition: background 0.15s;
-  min-height: 72px;
-  padding: 8px !important;
+  height: 80px;
+  max-height: 80px;
+  overflow: hidden;
+  padding: 6px !important;
+  position: relative;
 }
 .grade-celula:hover { background: #FFF8F0; }
 .grade-celula:active { background: #FFE8D5; }
 .grade-resumo {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: var(--text);
   line-height: 1.4;
   display: -webkit-box;
@@ -865,8 +870,18 @@ textarea { resize: vertical; }
   -webkit-box-orient: vertical;
   overflow: hidden;
   white-space: pre-wrap;
+  word-break: break-word;
+  max-height: calc(1.4em * 3);
 }
-.grade-vazia { color: var(--muted); }
+.grade-vazia {
+  color: var(--border);
+  font-size: 1.2rem;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 68px;
+}
 
 /* ============================================================
    Calendário da Agenda (modo calendário)

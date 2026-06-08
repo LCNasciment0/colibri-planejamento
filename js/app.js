@@ -419,17 +419,16 @@ function renderizarGradeEditor(plano) {
   abas.classList.add('hidden');
 
   const dias = ['segunda', 'terca', 'quarta', 'quinta', 'sexta'];
-  const labelDias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
+  const labelDias = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex'];
 
   const linhas = plano.semanas.map((semana) => {
     const celulas = dias.map((dia) => {
       const ativ = semana.atividades.find((a) => a.dia_semana === dia);
-      const resumo = ativ?.conteudo
-        ? ativ.conteudo.split('\n').slice(0, 2).join('\n')
-        : '';
-      return `<td class="grade-celula" data-id="${ativ?.id || ''}" data-semana="${semana.numero}" data-dia="${dia}">
-        <span class="grade-resumo">${resumo || '<span class="grade-vazia">—</span>'}</span>
-      </td>`;
+      const temConteudo = ativ?.conteudo?.trim();
+      const resumoHtml = temConteudo
+        ? `<span class="grade-resumo">${escapeHtml(ativ.conteudo)}</span>`
+        : `<span class="grade-vazia">+</span>`;
+      return `<td class="grade-celula" data-id="${ativ?.id || ''}" data-semana="${semana.numero}" data-dia="${dia}">${resumoHtml}</td>`;
     }).join('');
     return `<tr><th class="grade-semana-label">S${semana.numero}</th>${celulas}</tr>`;
   }).join('');
@@ -439,6 +438,10 @@ function renderizarGradeEditor(plano) {
   conteudo.innerHTML = `
     <div class="grade-wrapper">
       <table class="grade-mensal">
+        <colgroup>
+          <col class="col-semana">
+          ${dias.map(() => '<col>').join('')}
+        </colgroup>
         <thead><tr><th></th>${cabecalho}</tr></thead>
         <tbody>${linhas}</tbody>
       </table>
@@ -448,6 +451,14 @@ function renderizarGradeEditor(plano) {
   conteudo.querySelectorAll('.grade-celula').forEach((celula) => {
     celula.addEventListener('click', () => abrirModalCelula(celula, plano));
   });
+}
+
+function escapeHtml(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 function abrirModalCelula(celula, plano) {
@@ -472,16 +483,16 @@ function abrirModalCelula(celula, plano) {
     const novoConteudo = document.getElementById('modal-celula-textarea').value;
     if (atividadeId) {
       await salvarAtividade(atividadeId, novoConteudo);
-      // Atualiza o plano em memória
       plano.semanas.forEach((s) => {
         if (String(s.numero) === String(semanaNum)) {
           const a = s.atividades.find((av) => av.dia_semana === dia);
           if (a) a.conteudo = novoConteudo;
         }
       });
-      // Atualiza célula visualmente
-      const resumo = novoConteudo.split('\n').slice(0, 2).join('\n');
-      celula.querySelector('.grade-resumo').innerHTML = resumo || '<span class="grade-vazia">—</span>';
+      const temConteudo = novoConteudo.trim();
+      celula.innerHTML = temConteudo
+        ? `<span class="grade-resumo">${escapeHtml(novoConteudo)}</span>`
+        : `<span class="grade-vazia">+</span>`;
     }
     document.getElementById('modal-celula').classList.add('hidden');
   };
