@@ -71,7 +71,7 @@ function atualizarSaudacao() {
     nomeCompleto.split(' ').filter(Boolean).slice(0, 2).map((p) => p[0].toUpperCase()).join('') || '?';
 
   const elSaudacao = document.getElementById('txt-saudacao-home');
-  if (elSaudacao) elSaudacao.textContent = `${saudacao}, ${primeiroNome}! 🌟`;
+  if (elSaudacao) elSaudacao.textContent = `${saudacao}, ${primeiroNome}!`;
 
   const elAvatar = document.getElementById('home-avatar-iniciais');
   if (elAvatar) elAvatar.textContent = iniciais;
@@ -146,11 +146,10 @@ function renderizarListaRecentes(planos) {
   container.innerHTML = planos.map((p) => `
     <div class="card-recente" data-id="${p.id}" style="--cor-plano: ${p.cor || '#F97316'}">
       <div class="card-recente-top">
-        <span class="card-recente-emoji">📅</span>
         <span class="badge-status ${p.status}">${p.status === 'concluido' ? 'Concluído' : 'Em edição'}</span>
       </div>
       <span class="card-recente-mes">${meses[p.mes - 1]} ${p.ano}</span>
-      <span class="card-recente-turma">${p.turmas?.emoji || ''} ${p.turmas?.nome || ''}</span>
+      <span class="card-recente-turma">${p.turmas?.nome || ''}</span>
     </div>
   `).join('');
 
@@ -195,7 +194,7 @@ function renderizarListaMes(planos) {
     <div class="card-plano" data-id="${p.id}" style="--cor-plano: ${p.cor}">
       <div class="card-plano-cor"></div>
       <div class="card-plano-info">
-        <span class="card-plano-turma">${p.turmas?.emoji || ''} ${p.turmas?.nome || ''}</span>
+        <span class="card-plano-turma">${p.turmas?.nome || ''}</span>
         <span class="card-plano-mes">${meses[p.mes - 1]} ${p.ano}</span>
       </div>
       <span class="badge-status ${p.status}">${p.status === 'concluido' ? 'Concluído' : 'Rascunho'}</span>
@@ -223,7 +222,7 @@ function renderizarChipsTurmas(turmas, idParaSelecionar = null) {
 
   const chipsHtml = turmas.map((t) => `
     <button type="button" class="chip-turma" data-id="${t.id}" style="--chip-cor: ${t.cor || '#F97316'}">
-      <span>${t.emoji || '🌟'}</span> ${t.nome}
+      ${t.nome}
     </button>
   `).join('');
 
