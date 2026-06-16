@@ -1,5 +1,21 @@
+function carregarImagemBase64(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      canvas.getContext('2d').drawImage(img, 0, 0);
+      resolve(canvas.toDataURL('image/jpeg'));
+    };
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+
 async function gerarPDF(planejamentoId) {
   const plano = await buscarPlanejamento(planejamentoId);
+  const logoBase64 = await carregarImagemBase64('assets/logo.jpg').catch(() => null);
   const { jsPDF } = window.jspdf;
 
   const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
@@ -30,12 +46,10 @@ async function gerarPDF(planejamentoId) {
   doc.rect(0, 0, PW, HEADER_H, 'F');
   doc.setTextColor(255, 255, 255);
 
-  // Logo placeholder
-  doc.setDrawColor(255, 255, 255);
-  doc.roundedRect(MARGEM, 2, 8, 8, 1.5, 1.5, 'S');
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(4);
-  doc.text('COLIBRI', MARGEM + 0.8, 7);
+  // Logo
+  if (logoBase64) {
+    doc.addImage(logoBase64, 'JPEG', 3, 2, 20, 8);
+  }
 
   // Título central
   doc.setFontSize(11);
