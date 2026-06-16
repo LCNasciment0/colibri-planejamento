@@ -140,30 +140,12 @@ html, body {
 }
 .topo-home-logo { display: flex; align-items: center; gap: 10px; }
 .home-logo-icon {
-  width: 40px;
-  height: 40px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
   flex-shrink: 0;
 }
 .home-logo-icon img {
-  max-width: 100%;
-  max-height: 100%;
-}
-.home-logo-texto { display: flex; flex-direction: column; gap: 0; }
-.home-logo-nome {
-  font-family: 'Fredoka One', cursive;
-  font-size: 1.2rem;
-  color: var(--laranja);
-  line-height: 1.1;
-}
-.home-logo-sub {
-  font-size: 0.68rem;
-  color: var(--muted);
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  display: block;
 }
 .home-avatar {
   width: 38px;
@@ -190,6 +172,7 @@ html, body {
 .home-saudacao-txt {
   font-family: 'Fredoka One', cursive;
   font-size: 1.35rem;
+  font-weight: 700;
   color: var(--text);
 }
 .btn-logout-home {
