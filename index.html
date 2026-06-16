@@ -227,6 +227,7 @@
         </button>
       </header>
       <main class="conteudo">
+        <button id="btn-excluir-plano" class="btn-excluir-plano">🗑 Excluir planejamento</button>
         <div id="semanas-abas" class="abas-semanas"></div>
         <div id="semanas-conteudo" class="semanas-conteudo"></div>
         <div class="editor-acoes">
@@ -345,6 +346,19 @@
             <button type="submit" class="btn-primary">Salvar</button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- Modal: Confirmação de exclusão de planejamento -->
+    <div id="modal-excluir-plano" class="modal-overlay hidden">
+      <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <h3 class="modal-titulo">Excluir planejamento?</h3>
+        <p id="modal-excluir-plano-texto" class="modal-texto"></p>
+        <div class="modal-acoes">
+          <button type="button" id="btn-cancelar-excluir-plano" class="btn-secondary">Cancelar</button>
+          <button type="button" id="btn-confirmar-excluir-plano" class="btn-perigo">Excluir</button>
+        </div>
       </div>
     </div>
 

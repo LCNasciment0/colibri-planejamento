@@ -117,7 +117,22 @@ async function buscarAtividadesSemana(semanaId) {
   return data;
 }
 
-async function deletarPlanejamento(id) {
-  const { error } = await db.from('planejamentos').delete().eq('id', id);
-  if (error) throw error;
+async function excluirPlanejamento(id) {
+  const { data: semanas, error: errSemanas } = await db
+    .from('semanas')
+    .select('id')
+    .eq('planejamento_id', id);
+  if (errSemanas) throw errSemanas;
+
+  const semanaIds = semanas.map((s) => s.id);
+  if (semanaIds.length) {
+    const { error: errAtiv } = await db.from('atividades').delete().in('semana_id', semanaIds);
+    if (errAtiv) throw errAtiv;
+  }
+
+  const { error: errDelSemanas } = await db.from('semanas').delete().eq('planejamento_id', id);
+  if (errDelSemanas) throw errDelSemanas;
+
+  const { error: errPlano } = await db.from('planejamentos').delete().eq('id', id);
+  if (errPlano) throw errPlano;
 }

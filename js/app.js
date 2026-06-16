@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   configurarFormEvento();
   configurarBotaoLogout();
   configurarModalCelula();
+  configurarModalExcluirPlano();
   configurarToggleAgenda();
 
   const sessao = await getSession();
@@ -155,6 +156,7 @@ function renderizarListaRecentes(planos) {
   const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   container.innerHTML = planos.map((p) => `
     <div class="card-recente" data-id="${p.id}" style="--cor-plano: ${p.cor || '#F97316'}">
+      <button class="btn-excluir-card" data-id="${p.id}" title="Excluir">🗑</button>
       <span class="card-recente-mes">${meses[p.mes - 1]} ${p.ano}</span>
       <span class="card-recente-turma">${p.turmas?.nome || ''}</span>
     </div>
@@ -162,6 +164,14 @@ function renderizarListaRecentes(planos) {
 
   container.querySelectorAll('.card-recente').forEach((card) => {
     card.addEventListener('click', () => abrirEditor(card.dataset.id));
+  });
+
+  container.querySelectorAll('.btn-excluir-card').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const plano = planos.find((p) => p.id === btn.dataset.id);
+      confirmarExclusaoPlanejamento(plano, 'home');
+    });
   });
 }
 
@@ -351,6 +361,45 @@ async function abrirEditor(planejamentoId) {
   } catch (err) {
     console.error('Erro ao abrir editor:', err);
   }
+}
+
+// --- Exclusão de planejamento ---
+
+function configurarModalExcluirPlano() {
+  const modal = document.getElementById('modal-excluir-plano');
+
+  document.getElementById('btn-excluir-plano').addEventListener('click', () => {
+    confirmarExclusaoPlanejamento(estado.planejamentoAtual, 'editor');
+  });
+
+  document.getElementById('btn-cancelar-excluir-plano').addEventListener('click', () => {
+    modal.classList.add('hidden');
+  });
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.classList.add('hidden');
+  });
+}
+
+function confirmarExclusaoPlanejamento(plano, origem) {
+  if (!plano) return;
+  const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const modal = document.getElementById('modal-excluir-plano');
+  const texto = document.getElementById('modal-excluir-plano-texto');
+  texto.textContent = `Essa ação não pode ser desfeita. O planejamento de ${plano.turmas?.nome || ''} — ${meses[plano.mes - 1]}/${plano.ano} será removido permanentemente.`;
+  modal.classList.remove('hidden');
+
+  const btnConfirmar = document.getElementById('btn-confirmar-excluir-plano');
+  btnConfirmar.onclick = async () => {
+    try {
+      await excluirPlanejamento(plano.id);
+      modal.classList.add('hidden');
+      navegarPara('home');
+      carregarHome();
+    } catch (err) {
+      console.error('Erro ao excluir planejamento:', err);
+    }
+  };
 }
 
 function renderizarEditor(plano) {
