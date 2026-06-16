@@ -1,7 +1,7 @@
 /* ============================================================
    Design System — Colibri Planejamento
    ============================================================ */
-@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap');
 
 :root {
   --laranja:  #F97316;
@@ -53,7 +53,8 @@ html, body {
 }
 .login-logo img { height: 72px; margin-bottom: 8px; }
 .logo-text {
-  font-family: 'Fredoka One', cursive;
+  font-family: 'Fredoka', cursive;
+  font-weight: 600;
   font-size: 2.4rem;
   color: var(--laranja);
   line-height: 1;
@@ -118,13 +119,15 @@ html, body {
   flex-shrink: 0;
 }
 .topo h2 {
-  font-family: 'Fredoka One', cursive;
+  font-family: 'Fredoka', cursive;
+  font-weight: 600;
   font-size: 1.4rem;
   color: var(--laranja);
   flex: 1;
 }
 .saudacao { font-size: 0.85rem; color: var(--muted); font-weight: 600; }
-.nome-professora { font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: var(--laranja); }
+.nome-professora { font-family: 'Fredoka', cursive;
+  font-weight: 600; font-size: 1.3rem; color: var(--laranja); }
 .subtitulo { font-size: 0.8rem; color: var(--muted); }
 
 /* ============================================================
@@ -163,7 +166,8 @@ html, body {
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-family: 'Fredoka One', cursive;
+  font-family: 'Fredoka', cursive;
+  font-weight: 600;
   font-size: 0.95rem;
   flex-shrink: 0;
   cursor: pointer;
@@ -177,9 +181,9 @@ html, body {
   margin-bottom: 12px;
 }
 .home-saudacao-txt {
-  font-family: 'Fredoka One', cursive;
+  font-family: 'Fredoka', cursive;
+  font-weight: 600;
   font-size: 1.35rem;
-  font-weight: 700;
   color: var(--text);
 }
 .btn-logout-home {
@@ -530,7 +534,8 @@ textarea { resize: vertical; }
   flex-direction: column;
   gap: 2px;
 }
-.stat-numero { font-family: 'Fredoka One', cursive; font-size: 1.8rem; color: var(--laranja); }
+.stat-numero { font-family: 'Fredoka', cursive;
+  font-weight: 600; font-size: 1.8rem; color: var(--laranja); }
 .stat-turmas-cor { color: var(--laranja); }
 .stat-planos-cor { color: var(--roxo); }
 .stat-pdfs-cor  { color: var(--verde); }
@@ -573,7 +578,8 @@ textarea { resize: vertical; }
   gap: 2px;
 }
 .btn-novo-titulo {
-  font-family: 'Fredoka One', cursive;
+  font-family: 'Fredoka', cursive;
+  font-weight: 600;
   font-size: 1.1rem;
   line-height: 1;
 }
@@ -633,7 +639,8 @@ textarea { resize: vertical; }
   margin-bottom: 10px;
 }
 .secao-titulo h3 {
-  font-family: 'Fredoka One', cursive;
+  font-family: 'Fredoka', cursive;
+  font-weight: 600;
   font-size: 1.1rem;
   color: var(--text);
 }
@@ -648,7 +655,8 @@ textarea { resize: vertical; }
   margin-bottom: 12px;
 }
 .mes-ano-label {
-  font-family: 'Fredoka One', cursive;
+  font-family: 'Fredoka', cursive;
+  font-weight: 600;
   font-size: 1.15rem;
   color: var(--text);
 }
@@ -943,7 +951,8 @@ textarea { resize: vertical; }
   margin: 0 auto 16px;
 }
 .modal-titulo {
-  font-family: 'Fredoka One', cursive;
+  font-family: 'Fredoka', cursive;
+  font-weight: 600;
   font-size: 1.25rem;
   color: var(--text);
   margin-bottom: 16px;
@@ -1009,7 +1018,8 @@ textarea { resize: vertical; }
 .grade-cabecalho {
   background: var(--laranja);
   color: #fff;
-  font-family: 'Fredoka One', cursive;
+  font-family: 'Fredoka', cursive;
+  font-weight: 600;
   font-size: 0.78rem;
   text-align: center;
   padding: 7px 2px !important;
@@ -1018,7 +1028,8 @@ textarea { resize: vertical; }
 .grade-semana-label {
   background: #FFF0E0;
   color: var(--laranja);
-  font-family: 'Fredoka One', cursive;
+  font-family: 'Fredoka', cursive;
+  font-weight: 600;
   font-size: 0.8rem;
   text-align: center;
   padding: 0 4px !important;
@@ -1098,7 +1109,8 @@ textarea { resize: vertical; }
   gap: 8px;
 }
 .detalhe-data-label {
-  font-family: 'Fredoka One', cursive;
+  font-family: 'Fredoka', cursive;
+  font-weight: 600;
   font-size: 1rem;
   color: var(--text);
   margin-bottom: 4px;
