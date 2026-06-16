@@ -6,7 +6,7 @@ function carregarImagemBase64(src) {
       canvas.width = img.width;
       canvas.height = img.height;
       canvas.getContext('2d').drawImage(img, 0, 0);
-      resolve(canvas.toDataURL('image/jpeg'));
+      resolve(canvas.toDataURL('image/png'));
     };
     img.onerror = reject;
     img.src = src;
@@ -15,7 +15,7 @@ function carregarImagemBase64(src) {
 
 async function gerarPDF(planejamentoId) {
   const plano = await buscarPlanejamento(planejamentoId);
-  const logoBase64 = await carregarImagemBase64('assets/logo.jpg').catch(() => null);
+  const logoBase64 = await carregarImagemBase64('assets/logo.png').catch(() => null);
   const { jsPDF } = window.jspdf;
 
   const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
@@ -48,7 +48,7 @@ async function gerarPDF(planejamentoId) {
 
   // Logo
   if (logoBase64) {
-    doc.addImage(logoBase64, 'JPEG', 3, 2, 20, 8);
+    doc.addImage(logoBase64, 'PNG', 3, 2, 20, 8);
   }
 
   // Título central

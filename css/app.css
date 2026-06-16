@@ -146,6 +146,13 @@ html, body {
 }
 .home-logo-icon img {
   display: block;
+  height: 48px;
+  object-fit: contain;
+}
+@media (max-width: 768px) {
+  .home-logo-icon img {
+    height: 36px;
+  }
 }
 .home-avatar {
   width: 38px;
