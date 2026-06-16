@@ -51,7 +51,7 @@ html, body {
   text-align: center;
   margin-bottom: 36px;
 }
-.login-logo img { height: 72px; margin-bottom: 8px; }
+.login-logo img { height: 72px; margin-bottom: 8px; mix-blend-mode: multiply; }
 .logo-text {
   font-family: 'Fredoka', cursive;
   font-weight: 600;
@@ -151,6 +151,7 @@ html, body {
   display: block;
   height: 48px;
   object-fit: contain;
+  mix-blend-mode: multiply;
 }
 @media (max-width: 768px) {
   .home-logo-icon img {
